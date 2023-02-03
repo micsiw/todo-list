@@ -23,6 +23,7 @@ main {
     flex-wrap: wrap;
     padding: 20px 30px;
     gap: 5%;
+    position: relative;
 }
 
 .todo-container {
@@ -39,14 +40,26 @@ main {
     overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center;
+    flex-direction: column;
     transition: all .2s ease;
     background-color: antiquewhite;
     z-index: 1;
 
 }
 
+.todo-title {
+    text-align: center;
+}
+
 .todo-block.expand {
     height: 600px;
     z-index: 2;
+    justify-content: flex-start;
+}
+
+#add-todo {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    font-size: 2rem;
 }

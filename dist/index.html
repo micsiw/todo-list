@@ -19,16 +19,17 @@
             <div class="header-project-info">Actual project: default</div>
             <div class="header-project-list">
                 <label for="project-list">Choose project: </label>
-                <select name="projects" id="project-list" name="project-list">
-                    <option value="default">Default project</option>
-                    <option value="test">Test</option>
-                    <option value="school">School</option>
-                </select>
+                <select id="project-list" name="project-list"></select>
+            <button type="button" id="add-project">Add project</button>
+            </div>
         </header>
         <main>
             <div class="todo-container">
                 <div class="todo-block">
                     <p class="todo-title">Test todo</p>
+                    <div class="todo-tasks">
+                        
+                    </div>
                 </div>
             </div>
             <div class="todo-container">
@@ -56,8 +57,8 @@
                     <p class="todo-title">Test todo</p>
                 </div>
             </div>
-            
-        </main>
+            <button type="button" id="add-todo">Add todo</button>
+        </main> 
     </div>
 </body>
 </html>

@@ -1,7 +1,5 @@
-const block = document.querySelectorAll('.todo-block');
+import { initializeWebPage } from "./modules/ui";
 
-block.forEach(element => {
-    element.addEventListener('click', () => {
-        element.classList.toggle('expand');
-    })
-})
+
+
+initializeWebPage();
