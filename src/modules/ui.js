@@ -1,30 +1,20 @@
-import newProject from './projects';
+import Project from './projects';
 import { projects } from './projects';
 
 const addProjectButton = document.querySelector('#add-project');
 const headerProject = document.querySelector('.header-project-list');
 const block = document.querySelectorAll('.todo-block');
 
+let actualProject = projects[0]
+
 function initializeWebPage() {
     addProjectButton.addEventListener('click', initializeNewProject);
 
-
-    block.forEach(element => {
-    element.addEventListener('click', () => {
-        element.classList.toggle('expand');
-        })
-    })
-
     updateProjectList();
-    swapProject();
-
-    console.log('Projects array: ' + projects)
-
+    loadTasks();
 };
 
 function initializeNewProject() {
-
-    let projectName;
 
     addProjectButton.remove();;
     const addProjectFormInput = document.createElement('input');
@@ -39,7 +29,7 @@ function initializeNewProject() {
     headerProject.appendChild(addProjectFormButton);
 
     function getProjectName() {
-        projectName = addProjectFormInput.value
+        const projectName = addProjectFormInput.value
 
         if (projectName === '') {
             alert('Project must be named');
@@ -47,7 +37,7 @@ function initializeNewProject() {
         }
 
         console.log('New project name is ' + projectName)
-        newProject.create(addProjectFormInput.value)
+        projects.push(Project(projectName));
         addProjectFormInput.remove();
         addProjectFormButton.remove();
         headerProject.appendChild(addProjectButton);
@@ -61,27 +51,52 @@ function updateProjectList() {
 
     projects.forEach(project => {
         const projectOption = document.createElement('option');
-        projectOption.value = project;
-        projectOption.innerHTML = project;
+        // const projectID = project.indexOf(project.getName());
+        // projectOption.dataset.id = projectID;
+        // zrób tak, żeby każdy projet miał id dataset po którym można ustawić aktualny projekt
+        projectOption.value = project.getName();
+        projectOption.innerHTML = project.getName();
         projectList.appendChild(projectOption);
     })
 }
 
-function swapProject() {
-    const projectList = document.querySelector('#project-list').childNodes;
-    const projectInfo = document.querySelector('.header-project-info');
+function loadTasks() {
+    const main = document.querySelector('main');
+    main.innerHTML = '';
 
-
-    projectList.forEach(project => {
-        console.log(project)
-        project.addEventListener('select', (e) => {
-            console.log(e);
-            projectInfo.innerHTML = project;
-        })
-    });
-
-// Zrob ta funkcje tak zeby zmieniala focus projektu na inny :P
-
+    actualProject.tasks.forEach(task => {
+        const container = document.createElement('div');
+        container.classList.add('todo-container');
+        const block = document.createElement('div');
+        block.classList.add('todo-block');
+        const title = document.createElement('p');
+        title.innerHTML = task.getName();
+        title.classList.add('todo-title');
+        block.appendChild(title);
+        container.appendChild(block);
+        main.appendChild(container);
+    })
 }
+
+//opcja rozwinięcia todo okna
+
+block.forEach(element => {
+    element.addEventListener('click', () => {
+        element.classList.toggle('expand');
+    })
+})
+
+//ładowanie nowego projektu na stronę i zmiana actualProject
+
+const projectList = document.querySelector('#project-list');
+    const projectInfo = document.querySelector('.header-project-info');
+    projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+
+    projectList.addEventListener("change", (e) => {
+        actualProject = e.target.value;
+        projectInfo.innerHTML = 'Actual project: ' + actualProject;
+        console.log('Actual project: ' + actualProject)
+        console.log(e.target)
+    });
 
 export { initializeWebPage };
