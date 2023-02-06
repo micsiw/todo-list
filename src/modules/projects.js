@@ -32,7 +32,7 @@ schoolProject.addTask('fifth task');
 
 
 
-console.log('Project list: ' + projects)
+//console.log('Project list: ' + projects)
 
 // console.log(defaultProject.tasks[0].getName())
 // console.log(defaultProject.tasks[0].getDate())

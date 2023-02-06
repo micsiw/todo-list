@@ -49,11 +49,9 @@ function updateProjectList() {
     const projectList = document.querySelector('#project-list');
     projectList.innerHTML = '';
 
-    projects.forEach(project => {
+    projects.forEach((project, index) => {
         const projectOption = document.createElement('option');
-        // const projectID = project.indexOf(project.getName());
-        // projectOption.dataset.id = projectID;
-        // zrób tak, żeby każdy projet miał id dataset po którym można ustawić aktualny projekt
+        projectOption.dataset.id = index;
         projectOption.value = project.getName();
         projectOption.innerHTML = project.getName();
         projectList.appendChild(projectOption);
@@ -88,15 +86,18 @@ block.forEach(element => {
 
 //ładowanie nowego projektu na stronę i zmiana actualProject
 
-const projectList = document.querySelector('#project-list');
+    const projectList = document.querySelector('#project-list');
     const projectInfo = document.querySelector('.header-project-info');
     projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
 
     projectList.addEventListener("change", (e) => {
-        actualProject = e.target.value;
-        projectInfo.innerHTML = 'Actual project: ' + actualProject;
+        const selectedOption = projectList.options[projectList.selectedIndex]
+        actualProject = projects[selectedOption.dataset.id]
+        projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
         console.log('Actual project: ' + actualProject)
-        console.log(e.target)
+        console.log(selectedOption.dataset.id)
+        loadTasks();
+        //console.log('Project ID: ' + e.target.dataset.id)
     });
 
 export { initializeWebPage };
