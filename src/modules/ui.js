@@ -3,9 +3,10 @@ import { projects } from './projects';
 
 const addProjectButton = document.querySelector('#add-project');
 const headerProject = document.querySelector('.header-project-list');
-const block = document.querySelectorAll('.todo-block');
 
 let actualProject = projects[0]
+
+//ładowanie strony
 
 function initializeWebPage() {
     addProjectButton.addEventListener('click', initializeNewProject);
@@ -13,6 +14,8 @@ function initializeWebPage() {
     updateProjectList();
     loadTasks();
 };
+
+//dodawanie nowego projektu
 
 function initializeNewProject() {
 
@@ -45,6 +48,8 @@ function initializeNewProject() {
     };
 };
 
+//aktualizacja listy aktywnych projektów
+
 function updateProjectList() {
     const projectList = document.querySelector('#project-list');
     projectList.innerHTML = '';
@@ -58,9 +63,12 @@ function updateProjectList() {
     })
 }
 
+//ładowanie tasków na stronę
+
 function loadTasks() {
-    const main = document.querySelector('main');
-    main.innerHTML = '';
+    const todoList = document.querySelector('.todo-list');
+    const block = document.querySelectorAll('.todo-block');
+    todoList.innerHTML = '';
 
     actualProject.tasks.forEach(task => {
         const container = document.createElement('div');
@@ -72,17 +80,12 @@ function loadTasks() {
         title.classList.add('todo-title');
         block.appendChild(title);
         container.appendChild(block);
-        main.appendChild(container);
+        todoList.appendChild(container);
+        block.addEventListener('click', () => {
+            block.classList.toggle('expand');
+        })
     })
 }
-
-//opcja rozwinięcia todo okna
-
-block.forEach(element => {
-    element.addEventListener('click', () => {
-        element.classList.toggle('expand');
-    })
-})
 
 //ładowanie nowego projektu na stronę i zmiana actualProject
 
@@ -90,14 +93,59 @@ block.forEach(element => {
     const projectInfo = document.querySelector('.header-project-info');
     projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
 
-    projectList.addEventListener("change", (e) => {
+    projectList.addEventListener('change', () => {
         const selectedOption = projectList.options[projectList.selectedIndex]
         actualProject = projects[selectedOption.dataset.id]
         projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
         console.log('Actual project: ' + actualProject)
         console.log(selectedOption.dataset.id)
         loadTasks();
-        //console.log('Project ID: ' + e.target.dataset.id)
     });
+
+//tworzenie nowych tasków 
+
+    const addTaskButton = document.querySelector('#add-todo');
+    const addTodoForm = document.querySelector('.add-todo-form');
+    const formOverlay = document.querySelector('#form-overlay');
+    const cancelForm = document.querySelector('#cancel-form');
+    addTaskButton.addEventListener('click', () => {
+        addTodoForm.classList.toggle('active');
+        formOverlay.classList.toggle('active');
+    })
+    cancelForm.addEventListener('click', () => {
+        addTodoForm.classList.toggle('active');
+        formOverlay.classList.toggle('active');
+    })
+
+    const dueDateForm = document.querySelector('#task-due-date');
+    dueDateForm.min = new Date().toLocaleDateString('en-ca');
+    dueDateForm.max = "2100-01-01";
+
+    const addSubTaskButton = document.querySelector('#add-subtask');
+
+    addSubTaskButton.addEventListener('click', () => {
+        const newSubTaskLabel = document.createElement('label');
+        const newSubTaskTitle = document.createElement('input');
+        const newSubTaskDateLabel = document.createElement('label');
+        const newSubTaskDueDate = document.createElement('input');
+        newSubTaskTitle.type = 'text';
+        newSubTaskTitle.id = 'subtask-name';
+        newSubTaskTitle.name = 'subtask-name';
+        newSubTaskLabel.for = newSubTaskTitle.id;
+        newSubTaskLabel.innerHTML = 'Subtask name:';
+        newSubTaskLabel.appendChild(newSubTaskTitle);
+        addSubTaskButton.before(newSubTaskLabel);
+        newSubTaskDueDate.type = 'date';
+        newSubTaskDueDate.id = 'subtask-due-date';
+        newSubTaskDueDate.name = 'subtask-due-date';
+        newSubTaskDueDate.min = new Date().toLocaleDateString('en-ca');
+        newSubTaskDueDate.max = "2100-01-01";
+        newSubTaskDateLabel.innerHTML = 'Subtask due date:';
+        newSubTaskDateLabel.appendChild(newSubTaskDueDate);
+        addSubTaskButton.before(newSubTaskDateLabel);
+    })
+   
+
+
 
 export { initializeWebPage };

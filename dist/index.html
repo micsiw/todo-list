@@ -24,38 +24,31 @@
             </div>
         </header>
         <main>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
-            <div class="todo-container">
-                <div class="todo-block">
-                    <p class="todo-title">Test todo</p>
-                </div>
-            </div>
+            <div class="todo-list"></div>
             <button type="button" id="add-todo">Add todo</button>
-        </main> 
+        </main>
     </div>
+    <div class="add-todo-form">
+        <div class="form-header">
+            <div class="form-title">Add new task</div>
+            <button id="cancel-form">&times;</button>
+        </div>
+        <div class="form-content">
+            <form>
+                <fieldset data-main-form>
+                    <label for="task-name">Task name:
+                    <input type="text" id="task-name" name="task-name"></label>
+                    <label for="task-due-date">Due date:
+                    <input type="date" id="task-due-date" name="task-due-date"></label>
+                </fieldset>
+                <fieldset data-sub-form>
+                    <h3>Add new subtask</h3>
+                    <button type=button id="add-subtask">&plus;</button>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+    <div id="form-overlay"></div>
 </body>
 </html>

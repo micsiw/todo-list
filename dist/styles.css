@@ -18,7 +18,7 @@ header {
     padding: 20px 30px;
 }
 
-main {
+.todo-list {
     display: flex;
     flex-wrap: wrap;
     padding: 20px 30px;
@@ -62,4 +62,65 @@ main {
     bottom: 25px;
     right: 25px;
     font-size: 2rem;
+}
+
+.add-todo-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border: 1px solid black;
+    z-index: 10;
+    background-color: white;
+    width: 400px;
+    height: 500px;
+    padding: 10px 15px;
+}
+
+.add-todo-form.active {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.form-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 14px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+#cancel-form {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.form-content > form > fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+fieldset > h3 {
+    text-align: center;
+}
+
+#form-overlay {
+    position: fixed;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
+}
+
+#form-overlay.active {
+    pointer-events: all;
+    opacity: 1;
+    z-index: 1;
 }
