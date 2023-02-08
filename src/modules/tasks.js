@@ -1,8 +1,11 @@
 const Task = (name, dueDate) => {
+
+    let subtasks = [];
+
     const getName = () => name;
     const getDate = () => dueDate;
 
-    return { getName, getDate }
+    return { subtasks, getName, getDate }
 };
 
 export default Task;

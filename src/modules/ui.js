@@ -67,7 +67,6 @@ function updateProjectList() {
 
 function loadTasks() {
     const todoList = document.querySelector('.todo-list');
-    const block = document.querySelectorAll('.todo-block');
     todoList.innerHTML = '';
 
     actualProject.tasks.forEach(task => {
@@ -75,15 +74,75 @@ function loadTasks() {
         container.classList.add('todo-container');
         const block = document.createElement('div');
         block.classList.add('todo-block');
-        const title = document.createElement('p');
-        title.innerHTML = task.getName();
-        title.classList.add('todo-title');
-        block.appendChild(title);
+        const todoHeader = document.createElement('div');
+        todoHeader.classList.add('todo-header');
+
+        const todoTitle = document.createElement('p');
+        const todoDate = document.createElement('p');
+
+        todoTitle.innerHTML = task.getName();
+        todoTitle.classList.add('todo-title')
+
+        todoDate.innerHTML = 'Date placeholder'
+        todoDate.classList.add('todo-date');
+
+        todoHeader.append(todoTitle, todoDate);
+        block.appendChild(todoHeader);
         container.appendChild(block);
         todoList.appendChild(container);
         block.addEventListener('click', () => {
             block.classList.toggle('expand');
-        })
+        });
+
+        const subtaskBlock = document.createElement('div');
+        subtaskBlock.classList.add('subtask-block');
+        block.appendChild(subtaskBlock)
+
+        const subtaskBlockTitle = document.createElement('h4');
+        subtaskBlockTitle.classList.add('subtask-block-title');
+        subtaskBlockTitle.innerHTML = 'subtask list';
+        subtaskBlock.appendChild(subtaskBlockTitle);
+
+        //tutaj generowanie subtasków w tasku
+
+        for (let i = 0; i < 5; i++){
+            const subtaskPosition = document.createElement('div');
+            subtaskPosition.classList.add('subtask-position');
+            subtaskBlock.appendChild(subtaskPosition);
+
+            const subtaskLabel = document.createElement('label');
+            subtaskLabel.for = 'subtask';
+            subtaskPosition.appendChild(subtaskLabel)
+            const subtaskCheck = document.createElement('input');
+            subtaskCheck.type = 'checkbox';
+            subtaskCheck.id = 'subtask'
+            subtaskLabel.appendChild(subtaskCheck);
+            const subtaskName = document.createElement('p');
+            subtaskName.classList.add('subtask-name');
+            subtaskName.innerHTML = 'typical subtask';
+            subtaskLabel.appendChild(subtaskName);
+            const subtaskDate = document.createElement('p');
+            subtaskDate.classList.add('subtask-date');
+            subtaskDate.innerHTML = 'date placeholder';
+            subtaskPosition.appendChild(subtaskDate);
+            const subtaskRemove = document.createElement('button');
+            subtaskRemove.type = 'button';
+            subtaskRemove.classList.add('subtask-remove');
+            subtaskRemove.innerHTML = '&times;';
+            subtaskPosition.appendChild(subtaskRemove);
+        }
+
+        const newSubTaskButton = document.createElement('button');
+        newSubTaskButton.id = 'add-subtask-block';
+        newSubTaskButton.innerHTML = '&plus;';
+        newSubTaskButton.type = 'button';
+        subtaskBlock.appendChild(newSubTaskButton);
+
+        const removeTodoButton = document.createElement('button');
+        removeTodoButton.id = 'remove-todo';
+        removeTodoButton.innerHTML = 'Remove';
+        removeTodoButton.type = 'button';
+        block.appendChild(removeTodoButton);
     })
 }
 
@@ -121,7 +180,7 @@ function loadTasks() {
     dueDateForm.min = new Date().toLocaleDateString('en-ca');
     dueDateForm.max = "2100-01-01";
 
-    const addSubTaskButton = document.querySelector('#add-subtask');
+    const addSubTaskButton = document.querySelector('#add-subtask-form');
 
     addSubTaskButton.addEventListener('click', () => {
         const newSubTaskLabel = document.createElement('label');

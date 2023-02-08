@@ -38,23 +38,50 @@ header {
     height: 50px;
     border: 1px solid black;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    transition: all .2s ease;
+    transition: z-index .6s step-end, height .4s ease-in-out;
     background-color: antiquewhite;
     z-index: 1;
+    display: grid;
+    grid-template-rows: 50px auto;
 
 }
 
-.todo-title {
-    text-align: center;
+.todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 10px;
 }
 
 .todo-block.expand {
     height: 600px;
     z-index: 2;
-    justify-content: flex-start;
+    transition: z-index .1s step-start, height .4s ease-in-out;
+}
+
+.subtask-block {
+    display: grid;
+    grid-auto-rows: 40px;
+    margin: 4px 8px;
+    align-items: center;
+    border: 1px black solid;
+}
+
+.subtask-block-title {
+    text-align: center;
+}
+
+.subtask-position {
+    display: flex;
+    justify-content: space-between;
+}
+
+.subtask-position > label {
+    display: flex;
+}
+
+#remove-todo {
+    height: 26px;
 }
 
 #add-todo {
