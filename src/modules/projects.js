@@ -33,9 +33,9 @@ testProject.addTask('fourth task', '');
 
 schoolProject.addTask('fifth task', '');
 
-defaultProject.tasks[0].addSubtask('first sub');
-defaultProject.tasks[0].addSubtask('second sub');
-defaultProject.tasks[2].addSubtask('third sub');
+defaultProject.tasks[0].addSubtask('first sub', '');
+defaultProject.tasks[0].addSubtask('second sub', '');
+defaultProject.tasks[2].addSubtask('third sub', '');
 
 
 //console.log(defaultProject.tasks[0].subtasks[0])

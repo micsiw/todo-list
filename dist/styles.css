@@ -38,7 +38,7 @@ header {
     height: 50px;
     border: 1px solid black;
     overflow: hidden;
-    transition: z-index .6s step-end, height .4s ease-in-out;
+    transition: z-index .4s step-end, height .4s ease-in-out;
     background-color: antiquewhite;
     z-index: 1;
     display: grid;
@@ -69,6 +69,18 @@ header {
 
 .subtask-block-title {
     text-align: center;
+}
+
+.new-subtask-block {
+    grid-row-end: span 2;
+
+    margin: 2px 8px;
+    border: 1px solid black;
+}
+
+.new-subtask-block > form {
+    display: flex;
+    flex-direction: column;
 }
 
 .subtask-position {
