@@ -9,7 +9,10 @@ const Project = (name) => {
 
     let tasks = [];
 
-    const addTask = (name, dueDate = 'no date') => {
+    const addTask = (name, dueDate) => {
+        if (dueDate === '') {
+            dueDate = 'no date';
+        }
         tasks.push(newTask(name, dueDate));
     };
     
@@ -22,14 +25,20 @@ const schoolProject = Project('School');
 
 projects.push(defaultProject, testProject, schoolProject);
 
-defaultProject.addTask('first task');
-defaultProject.addTask('second task');
-defaultProject.addTask('third task');
+defaultProject.addTask('first task', '2023-10-03');
+defaultProject.addTask('second task', '');
+defaultProject.addTask('third task', '2023-13-12');
 
-testProject.addTask('fourth task');
+testProject.addTask('fourth task', '');
 
-schoolProject.addTask('fifth task');
+schoolProject.addTask('fifth task', '');
 
+defaultProject.tasks[0].addSubtask('first sub');
+defaultProject.tasks[0].addSubtask('second sub');
+defaultProject.tasks[2].addSubtask('third sub');
+
+
+//console.log(defaultProject.tasks[0].subtasks[0])
 
 
 //console.log('Project list: ' + projects)

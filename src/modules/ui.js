@@ -56,7 +56,7 @@ function updateProjectList() {
 
     projects.forEach((project, index) => {
         const projectOption = document.createElement('option');
-        projectOption.dataset.id = index;
+        projectOption.dataset.projectId = index;
         projectOption.value = project.getName();
         projectOption.innerHTML = project.getName();
         projectList.appendChild(projectOption);
@@ -83,7 +83,7 @@ function loadTasks() {
         todoTitle.innerHTML = task.getName();
         todoTitle.classList.add('todo-title')
 
-        todoDate.innerHTML = 'Date placeholder'
+        todoDate.innerHTML = task.getDate();
         todoDate.classList.add('todo-date');
 
         todoHeader.append(todoTitle, todoDate);
@@ -105,9 +105,10 @@ function loadTasks() {
 
         //tutaj generowanie subtasków w tasku
 
-        for (let i = 0; i < 5; i++){
+        task.subtasks.forEach((subtask, index) => {
             const subtaskPosition = document.createElement('div');
             subtaskPosition.classList.add('subtask-position');
+            subtaskPosition.dataset.subtaskId = index;
             subtaskBlock.appendChild(subtaskPosition);
 
             const subtaskLabel = document.createElement('label');
@@ -119,18 +120,18 @@ function loadTasks() {
             subtaskLabel.appendChild(subtaskCheck);
             const subtaskName = document.createElement('p');
             subtaskName.classList.add('subtask-name');
-            subtaskName.innerHTML = 'typical subtask';
+            subtaskName.innerHTML = subtask.name;
             subtaskLabel.appendChild(subtaskName);
             const subtaskDate = document.createElement('p');
             subtaskDate.classList.add('subtask-date');
-            subtaskDate.innerHTML = 'date placeholder';
+            subtaskDate.innerHTML = subtask.dueDate;
             subtaskPosition.appendChild(subtaskDate);
             const subtaskRemove = document.createElement('button');
             subtaskRemove.type = 'button';
             subtaskRemove.classList.add('subtask-remove');
             subtaskRemove.innerHTML = '&times;';
             subtaskPosition.appendChild(subtaskRemove);
-        }
+        })
 
         const newSubTaskButton = document.createElement('button');
         newSubTaskButton.id = 'add-subtask-block';
@@ -154,14 +155,14 @@ function loadTasks() {
 
     projectList.addEventListener('change', () => {
         const selectedOption = projectList.options[projectList.selectedIndex]
-        actualProject = projects[selectedOption.dataset.id]
+        actualProject = projects[selectedOption.dataset.projectId]
         projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
-        console.log('Actual project: ' + actualProject)
-        console.log(selectedOption.dataset.id)
+        console.log('Actual project: ' + actualProject.getName())
+        console.log(selectedOption.dataset.projectId)
         loadTasks();
     });
 
-//tworzenie nowych tasków 
+//tworzenie formularza nowych tasków 
 
     const addTaskButton = document.querySelector('#add-todo');
     const addTodoForm = document.querySelector('.add-todo-form');
@@ -174,6 +175,9 @@ function loadTasks() {
     cancelForm.addEventListener('click', () => {
         addTodoForm.classList.toggle('active');
         formOverlay.classList.toggle('active');
+        //tutaj trzeba potem wrzucić funkcjęrysowania okna todo od
+        // początku żeby się zresetowało ładnie
+        document.getElementById('add-task-form').reset();
     })
 
     const dueDateForm = document.querySelector('#task-due-date');
@@ -202,6 +206,39 @@ function loadTasks() {
         newSubTaskDateLabel.innerHTML = 'Subtask due date:';
         newSubTaskDateLabel.appendChild(newSubTaskDueDate);
         addSubTaskButton.before(newSubTaskDateLabel);
+    })
+
+    //dodawanie nowych tasków
+
+    const confirmTaskButton = document.querySelector('#confirm-task-button');
+
+    confirmTaskButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const taskNameValue = document.getElementById('task-name').value;
+        let taskDueDate = document.getElementById('task-due-date').value;
+
+        if (taskNameValue === '') {
+            alert("Sorry, tasks must have a name.")
+            return false
+        }
+
+        actualProject.addTask(taskNameValue, taskDueDate);
+
+        const subTaskSection = document.querySelector('[data-sub-form]').elements;
+        const addedTaskIndex = actualProject.tasks.length - 1;
+
+        for (let i = 0; i<subTaskSection.length; i++) {
+            if (subTaskSection[i].type === 'text' && subTaskSection[i].value !== '') {
+                actualProject.tasks[addedTaskIndex].addSubtask(subTaskSection[i].value, subTaskSection[i+1].value)
+            } else if (subTaskSection[i].type === 'text' && subTaskSection[i].value === '') {
+                alert("Sorry, tasks must have a name.")
+                return false
+            }
+        }
+
+        loadTasks();
+        addTodoForm.classList.toggle('active');
+        formOverlay.classList.toggle('active');
     })
    
 

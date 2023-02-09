@@ -4,8 +4,16 @@ const Task = (name, dueDate) => {
 
     const getName = () => name;
     const getDate = () => dueDate;
+    const addSubtask = (name, dueDate) => {
+        if (dueDate === '') {
+            dueDate = 'no date';
+        }
+        subtasks.push({name, dueDate});
+    }
 
-    return { subtasks, getName, getDate }
+    return { subtasks, getName, getDate, addSubtask }
 };
+
+
 
 export default Task;

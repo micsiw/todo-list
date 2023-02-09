@@ -107,6 +107,7 @@ header {
 
 .add-todo-form.active {
     transform: translate(-50%, -50%) scale(1);
+    overflow: auto;
 }
 
 .form-header {

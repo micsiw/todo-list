@@ -34,7 +34,7 @@
             <button id="cancel-form">&times;</button>
         </div>
         <div class="form-content">
-            <form>
+            <form id="add-task-form">
                 <fieldset data-main-form>
                     <label for="task-name">Task name:
                     <input type="text" id="task-name" name="task-name"></label>
@@ -46,7 +46,7 @@
                     <button type=button id="add-subtask-form">&plus;</button>
                 </fieldset>
             </form>
-
+            <button type="submit" form="add-task-form" id="confirm-task-button">Add new task</button>
         </div>
     </div>
     <div id="form-overlay"></div>
