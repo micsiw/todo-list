@@ -2,11 +2,9 @@ import Project from './projects';
 import { projects } from './projects';
 
 const addProjectButton = document.querySelector('#add-project');
-const headerProject = document.querySelector('.header-project-list');
 const removeProjectButton = document.querySelector('#delete-project');
 
 let actualProject = projects[0]
-
 let projectIndex = projects.indexOf(actualProject)
 
 //ładowanie strony
@@ -18,7 +16,6 @@ function initializeWebPage() {
 
     updateProjectList();
     loadTasks();
-    addNewSubtasksControls()
 };
 
 //dodawanie nowego projektu
@@ -139,7 +136,7 @@ function loadTasks() {
             newDateTooltip.innerHTML = 'Press enter to confirm';
             newDateTooltip.classList.add('task-new-date-tooltip');
             newDate.type = 'date';
-            newDate.value = task.getDate();
+            newDate.value = task.getRawDate();
             newDate.id = 'task-new-due-date';
             newDate.name = 'task-new-due-date';
             newDate.min = new Date().toLocaleDateString('en-ca');
@@ -195,14 +192,20 @@ function loadTasks() {
             const subtaskCheck = document.createElement('input');
             subtaskCheck.type = 'checkbox';
             subtaskCheck.id = 'subtask'
+            subtaskCheck.checked = subtask.getStatus();
+
+            subtaskCheck.addEventListener('change', () => {
+                subtask.changeStatus();
+            })
+            
             subtaskLabel.appendChild(subtaskCheck);
             const subtaskName = document.createElement('p');
             subtaskName.classList.add('subtask-name');
-            subtaskName.innerHTML = subtask.name;
+            subtaskName.innerHTML = subtask.getName();
             subtaskLabel.appendChild(subtaskName);
             const subtaskDate = document.createElement('p');
             subtaskDate.classList.add('subtask-date');
-            subtaskDate.innerHTML = subtask.dueDate;
+            subtaskDate.innerHTML = subtask.getDate();
             subtaskPosition.appendChild(subtaskDate);
             const subtaskRemove = document.createElement('button');
             subtaskRemove.type = 'button';
@@ -314,10 +317,11 @@ function loadTasks() {
                         } else {
                             return false
                         }
+                    } else if (i === subtaskList.length - 1) {
+                        actualProject.tasks.splice(index, 1);
+                        loadTasks();
                     }
                 }
-                actualProject.tasks.splice(index, 1);
-                loadTasks();
             } else {
                 actualProject.tasks.splice(index, 1);
                 loadTasks();
@@ -325,6 +329,8 @@ function loadTasks() {
         })
 
     })
+
+    addNewSubtasksControls();
 
 }
 

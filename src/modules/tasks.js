@@ -1,26 +1,32 @@
+import newSubtask from './subtasks';
+import { format, parseISO } from 'date-fns';
+
 const Task = (name, dueDate) => {
 
     let subtasks = [];
 
     const getName = () => name;
-    const getDate = () => dueDate;
+    const getRawDate = () => dueDate;
+    const getDate = () => {
+        if (dueDate === '') {
+            return 'no deadline'
+        } else {
+            return format(parseISO(dueDate), 'd/MM/y')
+        }
+    }
     const setDate = (newDate) => {
+        console.log(newDate)
         if (newDate === '') {
-            dueDate = 'no date'
+            dueDate = ''
         } else {
             dueDate = newDate;
         }
     }
-    const addSubtask = (name, dueDate) => {
-        if (dueDate === '') {
-            dueDate = 'no date';
-        }
-        subtasks.push({name, dueDate});
+    const addSubtask = (name, dueDate, status) => {
+        subtasks.push(newSubtask(name, dueDate, status));
     }
 
-    return { subtasks, getName, getDate, setDate, addSubtask }
+    return { subtasks, getName, getDate, getRawDate, setDate, addSubtask }
 };
-
-
 
 export default Task;
