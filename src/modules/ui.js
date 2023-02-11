@@ -3,13 +3,18 @@ import { projects } from './projects';
 
 const addProjectButton = document.querySelector('#add-project');
 const headerProject = document.querySelector('.header-project-list');
+const removeProjectButton = document.querySelector('#delete-project');
 
 let actualProject = projects[0]
+
+let projectIndex = projects.indexOf(actualProject)
 
 //ładowanie strony
 
 function initializeWebPage() {
+
     addProjectButton.addEventListener('click', initializeNewProject);
+    removeProjectButton.addEventListener('click', deleteActualProject);
 
     updateProjectList();
     loadTasks();
@@ -25,12 +30,13 @@ function initializeNewProject() {
     addProjectFormInput.type = 'text';
     addProjectFormInput.placeholder = 'project name'
     addProjectFormInput.required = true;
-    headerProject.appendChild(addProjectFormInput);
+    removeProjectButton.before(addProjectFormInput);
     const addProjectFormButton = document.createElement('button');
-    addProjectFormButton.onclick = getProjectName;
     addProjectFormButton.innerHTML = 'confirm'
     addProjectFormButton.id = 'button-project-accept';
-    headerProject.appendChild(addProjectFormButton);
+    removeProjectButton.before(addProjectFormButton);
+
+    addProjectFormButton.addEventListener('click', getProjectName);
 
     function getProjectName() {
         const projectName = addProjectFormInput.value
@@ -44,10 +50,46 @@ function initializeNewProject() {
         projects.push(Project(projectName));
         addProjectFormInput.remove();
         addProjectFormButton.remove();
-        headerProject.appendChild(addProjectButton);
+        removeProjectButton.before(addProjectButton);
         initializeWebPage();
     };
+
+    const cancelNewProject = function(e) {
+        if (!addProjectFormInput.contains(e.target) && !addProjectFormButton.contains(e.target)) {
+            addProjectFormInput.remove();
+            addProjectFormButton.remove();
+            removeProjectButton.before(addProjectButton);
+            removeEventListener('mouseup', cancelNewProject);
+            initializeWebPage();
+        }
+    }
+
+    window.addEventListener('mouseup', cancelNewProject);
 };
+
+function deleteActualProject() {
+
+    const projectList = document.querySelector('#project-list');
+
+    if (projectIndex === 0) {
+        alert(`Sorry, you can't delete ${actualProject.getName()} project`)
+        return false
+    } else if (actualProject.tasks.length > 0) {
+        if (confirm(`Project ${actualProject.getName()} is not empty, are you sure you want to delete all the content?`) === true) {
+            projects.splice(projectIndex, 1);
+            actualProject = projects[projectIndex-1];
+            initializeWebPage();
+            projectList.options[projectIndex-1].selected = true;
+            projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+        }
+    } else {
+        projects.splice(projectIndex, 1);
+        actualProject = projects[projectIndex-1]
+        initializeWebPage();
+        projectList.options[projectIndex-1].selected = true;
+        projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+    }
+}
 
 //aktualizacja listy aktywnych projektów
 
@@ -62,6 +104,8 @@ function updateProjectList() {
         projectOption.innerHTML = project.getName();
         projectList.appendChild(projectOption);
     })
+
+    projectList.options[projectIndex].selected = true;
 }
 
 //ładowanie tasków na stronę
@@ -88,6 +132,33 @@ function loadTasks() {
         todoDate.innerHTML = task.getDate();
         todoDate.classList.add('todo-date');
 
+        todoDate.addEventListener('click', () => {
+            const newDateContainer = document.createElement('div');
+            const newDate = document.createElement('input');
+            const newDateTooltip = document.createElement('p');
+            newDateTooltip.innerHTML = 'Press enter to confirm';
+            newDateTooltip.classList.add('task-new-date-tooltip');
+            newDate.type = 'date';
+            newDate.value = task.getDate();
+            newDate.id = 'task-new-due-date';
+            newDate.name = 'task-new-due-date';
+            newDate.min = new Date().toLocaleDateString('en-ca');
+            newDate.max = "2100-01-01";
+            todoDate.remove();
+            todoHeader.appendChild(newDateContainer);
+            newDateContainer.appendChild(newDate);
+            newDateContainer.appendChild(newDateTooltip)
+            newDate.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    task.setDate(newDate.value)
+                    newDateContainer.remove();
+                    todoDate.innerHTML = task.getDate();
+                    todoHeader.appendChild(todoDate);
+                }
+            });
+            newDate.focus();
+        })
+
         todoHeader.append(todoTitle, todoDate);
         block.appendChild(todoHeader);
         container.appendChild(block);
@@ -112,10 +183,10 @@ function loadTasks() {
 
         //tutaj generowanie subtasków w tasku
 
-        task.subtasks.forEach((subtask, index) => {
+        task.subtasks.forEach((subtask, subindex) => {
             const subtaskPosition = document.createElement('div');
             subtaskPosition.classList.add('subtask-position');
-            subtaskPosition.dataset.subtaskId = index;
+            subtaskPosition.dataset.subtaskId = subindex;
             subtaskBlock.appendChild(subtaskPosition);
 
             const subtaskLabel = document.createElement('label');
@@ -138,6 +209,15 @@ function loadTasks() {
             subtaskRemove.classList.add('subtask-remove');
             subtaskRemove.innerHTML = '&times;';
             subtaskPosition.appendChild(subtaskRemove);
+
+            //usuwanie subtasków bezpośrednio w bloku
+
+            subtaskRemove.addEventListener('click', () => {
+                actualProject.tasks[index].subtasks.splice(subindex, 1);
+                loadTasks();
+                document.querySelector(`[data-task-id="${index}"]`).classList.add('expand');
+
+            })
         })
 
         //tutaj dodawanie subtasków bezpośrednio w bloku
@@ -212,11 +292,38 @@ function loadTasks() {
             })
         })
 
+        //usuwanie tasków
+
         const removeTodoButton = document.createElement('button');
         removeTodoButton.id = 'remove-todo';
         removeTodoButton.innerHTML = 'Remove';
         removeTodoButton.type = 'button';
         block.appendChild(removeTodoButton);
+
+        removeTodoButton.addEventListener('click', () => {
+            const actualTask = document.querySelector('.expand');
+            const subtaskList = actualTask.querySelectorAll('#subtask');
+            
+            if (subtaskList.length > 0) {
+                for (let i = 0; i < subtaskList.length; i++) {
+                    if (subtaskList[i].checked === false) {
+                        if (confirm(`There are undone subtasks in ${task.getName()}, you want to delete whole task anyway?`) === true) {
+                            actualProject.tasks.splice(index, 1);
+                            loadTasks();
+                            break;
+                        } else {
+                            return false
+                        }
+                    }
+                }
+                actualProject.tasks.splice(index, 1);
+                loadTasks();
+            } else {
+                actualProject.tasks.splice(index, 1);
+                loadTasks();
+            }
+        })
+
     })
 
 }
@@ -230,6 +337,7 @@ projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
 projectList.addEventListener('change', () => {
     const selectedOption = projectList.options[projectList.selectedIndex]
     actualProject = projects[selectedOption.dataset.projectId]
+    projectIndex = selectedOption.dataset.projectId
     projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
     console.log('Actual project: ' + actualProject.getName())
     console.log(selectedOption.dataset.projectId)

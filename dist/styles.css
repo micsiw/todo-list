@@ -10,12 +10,20 @@ html, body {
     height: 100%;
 }
 
+button {
+    cursor: pointer;
+}
+
 header {
     display: flex;
     justify-content: space-around;
     align-items: center;
     background-color: antiquewhite;
     padding: 20px 30px;
+}
+
+#project-list, #project-list > * {
+    cursor: pointer;
 }
 
 .todo-list {
@@ -43,7 +51,7 @@ header {
     z-index: 1;
     display: grid;
     grid-template-rows: 50px auto;
-
+    cursor: cell;
 }
 
 .todo-header {
@@ -57,6 +65,16 @@ header {
     height: 600px;
     z-index: 2;
     transition: z-index .1s step-start, height .4s ease-in-out;
+    cursor: default;
+}
+
+.todo-date {
+    cursor: pointer;
+}
+
+.task-new-date-tooltip {
+    font-size: 0.7rem;
+    text-align: center;
 }
 
 .subtask-block {
@@ -162,5 +180,5 @@ fieldset > h3 {
 #form-overlay.active {
     pointer-events: all;
     opacity: 1;
-    z-index: 1;
+    z-index: 3;
 }
