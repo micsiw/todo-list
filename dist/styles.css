@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&display=swap');
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -8,22 +10,126 @@
 
 html, body {
     height: 100%;
+    font-family: 'Nunito', sans-serif;
 }
 
 button {
     cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+}
+
+input {
+    font-family: 'Nunito', sans-serif;
+}
+
+fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
 }
 
 header {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: antiquewhite;
-    padding: 20px 30px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: #0353A4;
+    color: white;
+    padding: 14px 30px;
 }
 
-#project-list, #project-list > * {
+.header-logo {
+    font-size: 1.4rem;
+    font-family: 'Nunito', sans-serif;
+    grid-column: 1 / 2;
+}
+
+.header-project-info {
+    text-align: center;
+    grid-column: 3;
+}
+
+.header-actual-project {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.header-actual-label {
+    font-size: 0.8rem;
+    margin-bottom: -4px;
+    font-style: italic;
+}
+
+.header-project-list {
+    grid-column: 4 / 6;
+    align-self: center;
+    justify-self: end;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+#add-project, #delete-project, #button-project-accept {
+    background-color: #149911;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    box-sizing: border-box;
+    color: #FFFFFF;
     cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    padding: .5rem .7rem;
+    text-align: center;
+    text-decoration: none #6B7280 solid;
+    text-decoration-thickness: auto;
+    transition-duration: .2s;
+    transition-property: background-color,border-color,color,fill,stroke;
+    transition-timing-function: cubic-bezier(.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+}
+
+#add-project:hover, #button-project-accept:hover {
+    background-color: #11b30e;
+}
+
+#delete-project:hover {
+    background-color: #e71010;
+}
+
+button:focus {
+    box-shadow: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+#add-project-form {
+    height: 2rem;
+    font-size: .9rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+#button-project-accept {
+    margin-left: 10px;
+}
+
+#delete-project {
+    margin-left: 10px;
+    background-color: #c90101;
+}
+
+#project-list {
+    cursor: pointer;
+    margin-right: 40px;
+    width: 120px;
+    font-size: 1.2rem;
+    position: relative;
+    top: 2px;
+    border-radius: 10px;
+    padding: 2px 4px;
 }
 
 .todo-list {
@@ -43,15 +149,16 @@ header {
 .todo-block {
     position: absolute;
     width: 400px;
-    height: 50px;
-    border: 1px solid black;
+    max-height: 50px;
+    border-radius: 10px;
     overflow: hidden;
-    transition: z-index .4s step-end, height .4s ease-in-out;
-    background-color: antiquewhite;
+    transition: z-index .4s step-end, max-height .6s ease-out;
+    background-color: #B9D6F2;
     z-index: 1;
     display: grid;
     grid-template-rows: 50px auto;
     cursor: cell;
+    padding-bottom: 4px;
 }
 
 .todo-header {
@@ -62,9 +169,10 @@ header {
 }
 
 .todo-block.expand {
-    height: 600px;
+    height: auto;
+    max-height: 800px;
     z-index: 2;
-    transition: z-index .1s step-start, height .4s ease-in-out;
+    transition: z-index .4s step-start, max-height .6s ease-in;
     cursor: default;
 }
 
@@ -81,24 +189,72 @@ header {
     display: grid;
     grid-auto-rows: 40px;
     margin: 4px 8px;
+    padding: 4px 6px;
     align-items: center;
-    border: 1px black solid;
+    background-color: #d3eaff;
+    border-radius: 10px;
 }
 
 .subtask-block-title {
     text-align: center;
+    font-size: 0.9rem;
 }
 
 .new-subtask-block {
     grid-row-end: span 2;
 
     margin: 2px 8px;
-    border: 1px solid black;
+    font-size: 0.9rem;
 }
 
 .new-subtask-block > form {
     display: flex;
     flex-direction: column;
+}
+
+.new-subtask-block label {
+    margin-bottom: 6px;
+}
+
+.new-subtask-block input {
+    height: 22px;
+    border-radius: 6px;
+    padding: 6px 6x;
+    margin-left: 4px;
+}
+
+.new-subtask-controls-block {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding-bottom: 2px;
+}
+
+.new-subtask-controls-block button {    
+    background-color: #0353A4;
+    border: 1px solid transparent;
+    border-radius: .5rem;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    line-height: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none #6B7280 solid;
+    text-decoration-thickness: auto;
+    transition-duration: .2s;
+    transition-property: background-color,border-color,color,fill,stroke;
+    transition-timing-function: cubic-bezier(.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+}
+
+.new-subtask-controls-block button:hover {    
+    background-color: #1d6ebe;
 }
 
 .subtask-position {
@@ -108,17 +264,88 @@ header {
 
 .subtask-position > label {
     display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.subtask-remove {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+.subtask-remove img {
+    height: 18px;
 }
 
 #remove-todo {
-    height: 26px;
+    background-color: #0353A4;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    padding: .05rem .6rem;
+    text-align: center;
+    text-decoration: none #6B7280 solid;
+    text-decoration-thickness: auto;
+    transition-duration: .2s;
+    transition-property: background-color,border-color,color,fill,stroke;
+    transition-timing-function: cubic-bezier(.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+}
+
+#remove-todo:hover {
+    background-color: #1d6ebe;
+}
+
+.remove-todo-container {
+    display: flex;
+    justify-content: center;
 }
 
 #add-todo {
     position: fixed;
     bottom: 25px;
     right: 25px;
-    font-size: 2rem;
+    background-color: #0353A4;
+    border: 1px solid transparent;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    text-decoration: none #6B7280 solid;
+    text-decoration-thickness: auto;
+    transition-duration: .2s;
+    transition-property: background-color,border-color,color,fill,stroke;
+    transition-timing-function: cubic-bezier(.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+}
+
+#add-todo:hover {
+    background-color: #1d6ebe;
 }
 
 .add-todo-form {
@@ -127,12 +354,111 @@ header {
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     transition: 200ms ease-in-out;
-    border: 1px solid black;
     z-index: 10;
     background-color: white;
     width: 400px;
-    height: 500px;
+    height: auto;
+    max-height: 600px;
     padding: 10px 15px;
+    background-color: #d3eaff;
+    border-radius: 16px;
+}
+
+.form-title {
+    font-weight: 600;
+}
+
+.todo-main-form, .todo-sub-form {
+    padding: 4px 6px;
+    margin-bottom: 10px;;
+}
+
+.todo-main-form input, .todo-sub-form input {
+    border-radius: 8px;
+    padding: 2px 6px;
+}
+
+.todo-sub-form input {
+    margin-left: 4px;
+}
+
+.todo-sub-form h3 {
+    font-weight: 600;
+}
+
+#add-subtask-form {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+#add-subtask-form > img {
+    height: 26px;
+    transition: transform .1s;
+}
+
+#add-subtask-form > img:hover {
+    transform: scale(1.1);
+}
+
+#add-subtask-block {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+.confirm-task-button-container {
+    display: flex;
+    justify-content: center;
+}
+
+#confirm-task-button {
+    background-color: #0353A4;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    padding: .05rem .6rem;
+    text-align: center;
+    text-decoration: none #6B7280 solid;
+    text-decoration-thickness: auto;
+    transition-duration: .2s;
+    transition-property: background-color,border-color,color,fill,stroke;
+    transition-timing-function: cubic-bezier(.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: auto;
+}
+
+#confirm-task-button:hover {
+    background-color: #1d6ebe;
+}
+
+#add-subtask-block > img {
+    height: 26px;
+    transition: transform .1s;
+}
+
+#add-subtask-block > img:hover {
+    transform: scale(1.1);
 }
 
 .add-todo-form.active {
@@ -154,6 +480,17 @@ header {
     position: absolute;
     right: 0;
     top: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 .form-content > form > fieldset {

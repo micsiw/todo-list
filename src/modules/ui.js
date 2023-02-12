@@ -14,6 +14,10 @@ function initializeWebPage() {
     addProjectButton.addEventListener('click', initializeNewProject);
     removeProjectButton.addEventListener('click', deleteActualProject);
 
+    projectInfo.innerHTML = actualProject.getName();
+
+    subTaskSection.innerHTML = '';
+    addNewSubtasksControls();
     updateProjectList();
     loadTasks();
 };
@@ -25,15 +29,21 @@ function initializeNewProject() {
     addProjectButton.remove();;
     const addProjectFormInput = document.createElement('input');
     addProjectFormInput.type = 'text';
-    addProjectFormInput.placeholder = 'project name'
-    addProjectFormInput.required = true;
+    addProjectFormInput.placeholder = 'project name';
+    addProjectFormInput.id = 'add-project-form';
     removeProjectButton.before(addProjectFormInput);
     const addProjectFormButton = document.createElement('button');
     addProjectFormButton.innerHTML = 'confirm'
     addProjectFormButton.id = 'button-project-accept';
     removeProjectButton.before(addProjectFormButton);
+    addProjectFormInput.focus();
 
     addProjectFormButton.addEventListener('click', getProjectName);
+    addProjectFormInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            getProjectName();
+        };
+    });
 
     function getProjectName() {
         const projectName = addProjectFormInput.value
@@ -43,11 +53,12 @@ function initializeNewProject() {
             return false
         }
 
-        console.log('New project name is ' + projectName)
         projects.push(Project(projectName));
         addProjectFormInput.remove();
         addProjectFormButton.remove();
         removeProjectButton.before(addProjectButton);
+        actualProject = projects[projects.length - 1];
+        projectIndex = projects.indexOf(actualProject);
         initializeWebPage();
     };
 
@@ -68,23 +79,25 @@ function deleteActualProject() {
 
     const projectList = document.querySelector('#project-list');
 
-    if (projectIndex === 0) {
+    if (projectIndex == 0) {
         alert(`Sorry, you can't delete ${actualProject.getName()} project`)
         return false
     } else if (actualProject.tasks.length > 0) {
         if (confirm(`Project ${actualProject.getName()} is not empty, are you sure you want to delete all the content?`) === true) {
             projects.splice(projectIndex, 1);
             actualProject = projects[projectIndex-1];
+            projectIndex = projectIndex - 1;
             initializeWebPage();
-            projectList.options[projectIndex-1].selected = true;
-            projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+            projectList.options[projectIndex].selected = true;
+            projectInfo.innerHTML = actualProject.getName();
         }
     } else {
         projects.splice(projectIndex, 1);
         actualProject = projects[projectIndex-1]
+        projectIndex = projectIndex - 1;
         initializeWebPage();
-        projectList.options[projectIndex-1].selected = true;
-        projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+        projectList.options[projectIndex].selected = true;
+        projectInfo.innerHTML = actualProject.getName();
     }
 }
 
@@ -129,7 +142,7 @@ function loadTasks() {
         todoDate.innerHTML = task.getDate();
         todoDate.classList.add('todo-date');
 
-        todoDate.addEventListener('click', () => {
+        todoDate.addEventListener('dblclick', () => {
             const newDateContainer = document.createElement('div');
             const newDate = document.createElement('input');
             const newDateTooltip = document.createElement('p');
@@ -194,7 +207,22 @@ function loadTasks() {
             subtaskCheck.id = 'subtask'
             subtaskCheck.checked = subtask.getStatus();
 
+            if (subtaskCheck.checked === true) {
+                subtaskPosition.style.textDecoration = 'line-through'; 
+                subtaskPosition.style.color = 'gray'
+            } else {
+                subtaskPosition.style.textDecoration = 'none'; 
+                subtaskPosition.style.color = 'black'
+            }
+
             subtaskCheck.addEventListener('change', () => {
+                if (subtaskCheck.checked === true) {
+                    subtaskPosition.style.textDecoration = 'line-through'; 
+                    subtaskPosition.style.color = 'gray'
+                } else {
+                    subtaskPosition.style.textDecoration = 'none';
+                    subtaskPosition.style.color = 'black'
+                }
                 subtask.changeStatus();
             })
             
@@ -210,7 +238,9 @@ function loadTasks() {
             const subtaskRemove = document.createElement('button');
             subtaskRemove.type = 'button';
             subtaskRemove.classList.add('subtask-remove');
-            subtaskRemove.innerHTML = '&times;';
+            const subtaskRemoveIcon = document.createElement('img');
+            subtaskRemoveIcon.src = 'images/trash.png'
+            subtaskRemove.appendChild(subtaskRemoveIcon);
             subtaskPosition.appendChild(subtaskRemove);
 
             //usuwanie subtasków bezpośrednio w bloku
@@ -227,81 +257,111 @@ function loadTasks() {
 
         const newSubTaskButton = document.createElement('button');
         newSubTaskButton.id = 'add-subtask-block';
-        newSubTaskButton.innerHTML = '&plus;';
         newSubTaskButton.type = 'button';
+        const newSubTaskButtonIcon = document.createElement('img');
+        newSubTaskButtonIcon.src = 'images/plus.png';
+        newSubTaskButton.appendChild(newSubTaskButtonIcon)
         subtaskBlock.appendChild(newSubTaskButton);
 
         newSubTaskButton.addEventListener('click', () => {
-            newSubTaskButton.remove();
+            if (subtaskBlock.childNodes.length === 17) {
+                alert("You've reached maximum number of subtasks.")
+                return false
+            } else {
+                newSubTaskButton.remove();
 
-            const newSubTaskInBlock = document.createElement('div');
-            newSubTaskInBlock.classList.add('new-subtask-block');
-            subtaskBlock.appendChild(newSubTaskInBlock);
+                const newSubTaskInBlock = document.createElement('div');
+                newSubTaskInBlock.classList.add('new-subtask-block');
+                subtaskBlock.appendChild(newSubTaskInBlock);
 
-            const newSubTaskForm = document.createElement('form')
-            newSubTaskForm.id = 'new-subtask-form-block';
-            newSubTaskInBlock.appendChild(newSubTaskForm);
+                const newSubTaskForm = document.createElement('form')
+                newSubTaskForm.id = 'new-subtask-form-block';
+                newSubTaskInBlock.appendChild(newSubTaskForm);
 
-            const newSubTaskLabel = document.createElement('label');
-            const newSubTaskTitle = document.createElement('input');
-            const newSubTaskDateLabel = document.createElement('label');
-            const newSubTaskDueDate = document.createElement('input');
-            newSubTaskTitle.type = 'text';
-            newSubTaskTitle.id = 'subtask-name-block';
-            newSubTaskTitle.name = 'subtask-name-block';
-            newSubTaskLabel.for = newSubTaskTitle.id;
-            newSubTaskLabel.innerHTML = 'Subtask name:';
-            newSubTaskLabel.appendChild(newSubTaskTitle);
-            newSubTaskForm.appendChild(newSubTaskLabel);
-            newSubTaskDueDate.type = 'date';
-            newSubTaskDueDate.id = 'subtask-due-date-block';
-            newSubTaskDueDate.name = 'subtask-due-date-block';
-            newSubTaskDueDate.min = new Date().toLocaleDateString('en-ca');
-            newSubTaskDueDate.max = "2100-01-01";
-            newSubTaskDateLabel.innerHTML = 'Subtask due date:';
-            newSubTaskDateLabel.appendChild(newSubTaskDueDate);
-            newSubTaskForm.appendChild(newSubTaskDateLabel);
+                const newSubTaskLabel = document.createElement('label');
+                const newSubTaskTitle = document.createElement('input');
+                const newSubTaskDateLabel = document.createElement('label');
+                const newSubTaskDueDate = document.createElement('input');
+                newSubTaskTitle.type = 'text';
+                newSubTaskTitle.id = 'subtask-name-block';
+                newSubTaskTitle.name = 'subtask-name-block';
+                newSubTaskLabel.for = newSubTaskTitle.id;
+                newSubTaskLabel.innerHTML = 'Subtask name:';
+                newSubTaskLabel.appendChild(newSubTaskTitle);
+                newSubTaskForm.appendChild(newSubTaskLabel);
+                newSubTaskTitle.focus();
+                newSubTaskDueDate.type = 'date';
+                newSubTaskDueDate.id = 'subtask-due-date-block';
+                newSubTaskDueDate.name = 'subtask-due-date-block';
+                newSubTaskDueDate.min = new Date().toLocaleDateString('en-ca');
+                newSubTaskDueDate.max = "2100-01-01";
+                newSubTaskDateLabel.innerHTML = 'Subtask due date:';
+                newSubTaskDateLabel.appendChild(newSubTaskDueDate);
+                newSubTaskForm.appendChild(newSubTaskDateLabel);
 
-            const newSubTaskControls = document.createElement('div');
-            newSubTaskControls.classList.add('new-subtask-controls-block');
-            newSubTaskInBlock.appendChild(newSubTaskControls)
+                const newSubTaskControls = document.createElement('div');
+                newSubTaskControls.classList.add('new-subtask-controls-block');
+                newSubTaskInBlock.appendChild(newSubTaskControls)
 
-            const newSubTaskAdd = document.createElement('button');
-            const newSubTaskAbandon = document.createElement('button');
-            newSubTaskAdd.type = 'button';
-            newSubTaskAdd.innerHTML = 'Submit'
-            newSubTaskAbandon.type = 'button';
-            newSubTaskAbandon.innerHTML = 'Abandon';
-            newSubTaskInBlock.append(newSubTaskAdd, newSubTaskAbandon)
+                const newSubTaskAdd = document.createElement('button');
+                const newSubTaskAbandon = document.createElement('button');
+                newSubTaskAdd.type = 'button';
+                newSubTaskAdd.innerHTML = 'Submit'
+                newSubTaskAbandon.type = 'button';
+                newSubTaskAbandon.innerHTML = 'Abandon';
+                newSubTaskControls.append(newSubTaskAdd, newSubTaskAbandon)
 
-            newSubTaskAdd.addEventListener('click', () => {
-                const subtaskNameBlock = document.getElementById('subtask-name-block').value;
-                const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
-                const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
+                newSubTaskAdd.addEventListener('click', () => {
+                    const subtaskNameBlock = document.getElementById('subtask-name-block').value;
+                    const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
+                    const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
 
-                if (subtaskNameBlock === '') {
-                    alert("Sorry, tasks must have a name.")
-                    return false
-                }
+                    if (subtaskNameBlock === '') {
+                        alert("Sorry, tasks must have a name.")
+                        return false
+                    }
 
-                actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
-                loadTasks();
-                document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
-            })
+                    actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
+                    loadTasks();
+                    document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
+                })
 
-            newSubTaskAbandon.addEventListener('click', () => {
-                newSubTaskInBlock.remove();
-                subtaskBlock.appendChild(newSubTaskButton);
-            })
+                //to fix
+
+                // newSubTaskAdd.addEventListener('keypress', (e) => {
+                //     if (e.key === 'Enter') {
+                //         const subtaskNameBlock = document.getElementById('subtask-name-block').value;
+                //         const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
+                //         const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
+
+                //         if (subtaskNameBlock === '') {
+                //             alert("Sorry, tasks must have a name.")
+                //             return false
+                //         }
+
+                //         actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
+                //         loadTasks();
+                //         document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
+                //     }
+                // })
+
+                newSubTaskAbandon.addEventListener('click', () => {
+                    newSubTaskInBlock.remove();
+                    subtaskBlock.appendChild(newSubTaskButton);
+                })
+            }
         })
-
+        
         //usuwanie tasków
 
         const removeTodoButton = document.createElement('button');
+        const removeButtonContainer = document.createElement('div');
+        removeButtonContainer.classList.add('remove-todo-container');
+        block.appendChild(removeButtonContainer)
         removeTodoButton.id = 'remove-todo';
-        removeTodoButton.innerHTML = 'Remove';
+        removeTodoButton.innerHTML = 'Delete task';
         removeTodoButton.type = 'button';
-        block.appendChild(removeTodoButton);
+        removeButtonContainer.appendChild(removeTodoButton);
 
         removeTodoButton.addEventListener('click', () => {
             const actualTask = document.querySelector('.expand');
@@ -329,24 +389,20 @@ function loadTasks() {
         })
 
     })
-
-    addNewSubtasksControls();
-
 }
 
 //ładowanie nowego projektu na stronę i zmiana actualProject
 
 const projectList = document.querySelector('#project-list');
-const projectInfo = document.querySelector('.header-project-info');
-projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
+const projectInfo = document.querySelector('.header-actual-project');
 
 projectList.addEventListener('change', () => {
     const selectedOption = projectList.options[projectList.selectedIndex]
     actualProject = projects[selectedOption.dataset.projectId]
     projectIndex = selectedOption.dataset.projectId
-    projectInfo.innerHTML = 'Actual project: ' + actualProject.getName();
-    console.log('Actual project: ' + actualProject.getName())
-    console.log(selectedOption.dataset.projectId)
+    console.log(actualProject)
+    console.log(projectIndex)
+    projectInfo.innerHTML = actualProject.getName();
     loadTasks();
 });
 
@@ -385,9 +441,10 @@ function addNewSubtasksControls() {
     const addSubTaskButton = document.createElement('button');
     addSubTaskButton.type = 'button';
     addSubTaskButton.id = 'add-subtask-form';
-    addSubTaskButton.innerHTML = '&plus;'
+    const addSubTaskButtonIcon = document.createElement('img');
+    addSubTaskButtonIcon.src = 'images/plus.png';
+    addSubTaskButton.appendChild(addSubTaskButtonIcon);
     subSection.appendChild(addSubTaskButton);
-
 
     addSubTaskButton.addEventListener('click', () => {
         const newSubTaskLabel = document.createElement('label');

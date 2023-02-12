@@ -15,7 +15,6 @@ const Task = (name, dueDate) => {
         }
     }
     const setDate = (newDate) => {
-        console.log(newDate)
         if (newDate === '') {
             dueDate = ''
         } else {
