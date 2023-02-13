@@ -1,124 +1,254 @@
+import { projects } from './storage';
 import Project from './projects';
-import { projects } from './projects';
-
-const addProjectButton = document.querySelector('#add-project');
-const removeProjectButton = document.querySelector('#delete-project');
 
 let actualProject = projects[0]
 let projectIndex = projects.indexOf(actualProject)
 
-//ładowanie strony
+//page loading
 
 function initializeWebPage() {
+
+    //initializing project buttons
+
+    const addProjectButton = document.querySelector('#add-project');
+    const removeProjectButton = document.querySelector('#delete-project');
 
     addProjectButton.addEventListener('click', initializeNewProject);
     removeProjectButton.addEventListener('click', deleteActualProject);
 
+    //loading new project on page
+
+    const projectList = document.querySelector('#project-list');
+    const projectInfo = document.querySelector('.header-actual-project');
+
     projectInfo.innerHTML = actualProject.getName();
 
+    projectList.addEventListener('change', () => {
+        const selectedOption = projectList.options[projectList.selectedIndex]
+        actualProject = projects[selectedOption.dataset.projectId]
+        projectIndex = selectedOption.dataset.projectId
+        console.log(actualProject)
+        console.log(projectIndex)
+        projectInfo.innerHTML = actualProject.getName();
+        loadTasks();
+    });
+
+    //creating new task form
+
+    const addTaskButton = document.querySelector('#add-todo');
+    const addTodoForm = document.querySelector('.add-todo-form');
+    const formOverlay = document.querySelector('#form-overlay');
+    const cancelForm = document.querySelector('#cancel-form');
+    const subTaskSection = document.querySelector('[data-sub-form]');
+    const taskName = document.querySelector('#task-name');
+    addTaskButton.addEventListener('click', () => {
+        addTodoForm.classList.toggle('active');
+        formOverlay.classList.toggle('active');
+        taskName.focus();
+    })
+    cancelForm.addEventListener('click', () => {
+        addTodoForm.classList.toggle('active');
+        formOverlay.classList.toggle('active');
+        subTaskSection.innerHTML = '';
+        addNewSubtasksControls();
+        document.getElementById('add-task-form').reset();
+    })
+
+    const dueDateForm = document.querySelector('#task-due-date');
+    dueDateForm.min = new Date().toLocaleDateString('en-ca');
+    dueDateForm.max = "2100-01-01";
+
+    //adding new project
+
+    function initializeNewProject() {
+
+        addProjectButton.remove();;
+        const addProjectFormInput = document.createElement('input');
+        addProjectFormInput.type = 'text';
+        addProjectFormInput.placeholder = 'project name';
+        addProjectFormInput.id = 'add-project-form';
+        removeProjectButton.before(addProjectFormInput);
+        const addProjectFormButton = document.createElement('button');
+        addProjectFormButton.innerHTML = 'confirm'
+        addProjectFormButton.id = 'button-project-accept';
+        removeProjectButton.before(addProjectFormButton);
+        addProjectFormInput.focus();
+
+        addProjectFormButton.addEventListener('click', createNewProject);
+        addProjectFormInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                createNewProject();
+            };
+        });
+
+        function createNewProject() {
+            const projectName = addProjectFormInput.value
+
+            if (projectName === '') {
+                alert('Project must be named');
+                return false
+            }
+
+            projects.push(Project(projectName));
+            addProjectFormInput.remove();
+            addProjectFormButton.remove();
+            removeProjectButton.before(addProjectButton);
+            actualProject = projects[projects.length - 1];
+            projectIndex = projects.indexOf(actualProject);
+            projectInfo.innerHTML = actualProject.getName();
+            localStorage.setItem('projects', JSON.stringify(projects))
+            updateProjectList();
+            loadTasks();
+        };
+
+        const cancelNewProject = function(e) {
+            if (!addProjectFormInput.contains(e.target) && !addProjectFormButton.contains(e.target)) {
+                addProjectFormInput.remove();
+                addProjectFormButton.remove();
+                removeProjectButton.before(addProjectButton);
+                removeEventListener('mouseup', cancelNewProject);
+            }
+        };
+
+        window.addEventListener('mouseup', cancelNewProject);
+    };
+
+    //deleting actual focused project
+
+    function deleteActualProject() {
+
+        const projectList = document.querySelector('#project-list');
+
+        if (projectIndex == 0) {
+            alert(`Sorry, you can't delete ${actualProject.getName()} project`)
+            return false
+        } else if (actualProject.tasks.length > 0) {
+            if (confirm(`Project ${actualProject.getName()} is not empty, are you sure you want to delete all the content?`) === true) {
+                projects.splice(projectIndex, 1);
+                actualProject = projects[projectIndex-1];
+                projectIndex = projectIndex - 1;
+                localStorage.setItem('projects', JSON.stringify(projects))
+                updateProjectList();
+                loadTasks();
+                projectList.options[projectIndex].selected = true;
+                projectInfo.innerHTML = actualProject.getName();
+            }
+        } else {
+            projects.splice(projectIndex, 1);
+            actualProject = projects[projectIndex-1]
+            projectIndex = projectIndex - 1;
+            localStorage.setItem('projects', JSON.stringify(projects))
+            updateProjectList();
+            loadTasks();
+            projectList.options[projectIndex].selected = true;
+            projectInfo.innerHTML = actualProject.getName();
+        };
+    };
+
+    //creating option to add new subtask in main task form creator
+
+    function addNewSubtasksControls() {
+
+        const subSection = document.querySelector('[data-sub-form]');
+        const subSectionTitle = document.createElement('h3');
+        subSectionTitle.innerHTML = 'Add new subtask';
+        subSection.appendChild(subSectionTitle);
+
+        const addSubTaskButton = document.createElement('button');
+        addSubTaskButton.type = 'button';
+        addSubTaskButton.id = 'add-subtask-form';
+        const addSubTaskButtonIcon = document.createElement('img');
+        addSubTaskButtonIcon.src = 'images/plus.png';
+        addSubTaskButton.appendChild(addSubTaskButtonIcon);
+        subSection.appendChild(addSubTaskButton);
+
+        addSubTaskButton.addEventListener('click', () => {
+            const newSubTaskLabel = document.createElement('label');
+            const newSubTaskTitle = document.createElement('input');
+            const newSubTaskDateLabel = document.createElement('label');
+            const newSubTaskDueDate = document.createElement('input');
+            newSubTaskTitle.type = 'text';
+            newSubTaskTitle.id = 'subtask-name';
+            newSubTaskTitle.name = 'subtask-name';
+            newSubTaskLabel.for = newSubTaskTitle.id;
+            newSubTaskLabel.innerHTML = 'Subtask name:';
+            newSubTaskLabel.appendChild(newSubTaskTitle);
+            addSubTaskButton.before(newSubTaskLabel);
+            newSubTaskDueDate.type = 'date';
+            newSubTaskDueDate.id = 'subtask-due-date';
+            newSubTaskDueDate.name = 'subtask-due-date';
+            newSubTaskDueDate.min = new Date().toLocaleDateString('en-ca');
+            newSubTaskDueDate.max = "2100-01-01";
+            newSubTaskDateLabel.innerHTML = 'Subtask due date:';
+            newSubTaskDateLabel.appendChild(newSubTaskDueDate);
+            addSubTaskButton.before(newSubTaskDateLabel);
+            newSubTaskTitle.focus();
+        });
+
+        //adding new task through main task creator
+
+        const confirmTaskButton = document.querySelector('#confirm-task-button');
+
+        confirmTaskButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const taskNameValue = document.getElementById('task-name').value;
+            let taskDueDate = document.getElementById('task-due-date').value;
+
+            if (taskNameValue === '') {
+                document.getElementById('task-name').placeholder = 'Name is required'
+                return false
+            } else {
+                actualProject.addTask(taskNameValue, taskDueDate);
+            }
+            
+            const subTaskSection = document.querySelector('[data-sub-form]');
+            const subTaskSectionElements = document.querySelector('[data-sub-form]').elements;
+            const addedTaskIndex = actualProject.tasks.length - 1;
+
+            for (let i = 0; i<subTaskSectionElements.length; i++) {
+                if (subTaskSectionElements[i].type === 'text' && subTaskSectionElements[i].value !== '') {
+                    actualProject.tasks[addedTaskIndex].addSubtask(subTaskSectionElements[i].value, subTaskSectionElements[i+1].value)
+                } else if (subTaskSectionElements[i].type === 'text' && subTaskSectionElements[i].value === '') {
+                    alert("Sorry, tasks must have a name.")
+                    return false
+                }
+            }
+
+            localStorage.setItem('projects', JSON.stringify(projects))
+            loadTasks();
+            addTodoForm.classList.toggle('active');
+            formOverlay.classList.toggle('active');
+            document.getElementById('add-task-form').reset();
+            subTaskSection.innerHTML = '';
+            addNewSubtasksControls()
+        })
+    };
+
+    //refreshing list of active projects
+
+    function updateProjectList() {
+        const projectList = document.querySelector('#project-list');
+        projectList.innerHTML = '';
+
+        projects.forEach((project, index) => {
+            const projectOption = document.createElement('option');
+            projectOption.dataset.projectId = index;
+            projectOption.value = project.getName();
+            projectOption.innerHTML = project.getName();
+            projectList.appendChild(projectOption);
+        })
+
+        projectList.options[projectIndex].selected = true;
+    };
+
+    localStorage.setItem('projects', JSON.stringify(projects))
     subTaskSection.innerHTML = '';
     addNewSubtasksControls();
     updateProjectList();
     loadTasks();
 };
 
-//dodawanie nowego projektu
-
-function initializeNewProject() {
-
-    addProjectButton.remove();;
-    const addProjectFormInput = document.createElement('input');
-    addProjectFormInput.type = 'text';
-    addProjectFormInput.placeholder = 'project name';
-    addProjectFormInput.id = 'add-project-form';
-    removeProjectButton.before(addProjectFormInput);
-    const addProjectFormButton = document.createElement('button');
-    addProjectFormButton.innerHTML = 'confirm'
-    addProjectFormButton.id = 'button-project-accept';
-    removeProjectButton.before(addProjectFormButton);
-    addProjectFormInput.focus();
-
-    addProjectFormButton.addEventListener('click', getProjectName);
-    addProjectFormInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            getProjectName();
-        };
-    });
-
-    function getProjectName() {
-        const projectName = addProjectFormInput.value
-
-        if (projectName === '') {
-            alert('Project must be named');
-            return false
-        }
-
-        projects.push(Project(projectName));
-        addProjectFormInput.remove();
-        addProjectFormButton.remove();
-        removeProjectButton.before(addProjectButton);
-        actualProject = projects[projects.length - 1];
-        projectIndex = projects.indexOf(actualProject);
-        initializeWebPage();
-    };
-
-    const cancelNewProject = function(e) {
-        if (!addProjectFormInput.contains(e.target) && !addProjectFormButton.contains(e.target)) {
-            addProjectFormInput.remove();
-            addProjectFormButton.remove();
-            removeProjectButton.before(addProjectButton);
-            removeEventListener('mouseup', cancelNewProject);
-            initializeWebPage();
-        }
-    }
-
-    window.addEventListener('mouseup', cancelNewProject);
-};
-
-function deleteActualProject() {
-
-    const projectList = document.querySelector('#project-list');
-
-    if (projectIndex == 0) {
-        alert(`Sorry, you can't delete ${actualProject.getName()} project`)
-        return false
-    } else if (actualProject.tasks.length > 0) {
-        if (confirm(`Project ${actualProject.getName()} is not empty, are you sure you want to delete all the content?`) === true) {
-            projects.splice(projectIndex, 1);
-            actualProject = projects[projectIndex-1];
-            projectIndex = projectIndex - 1;
-            initializeWebPage();
-            projectList.options[projectIndex].selected = true;
-            projectInfo.innerHTML = actualProject.getName();
-        }
-    } else {
-        projects.splice(projectIndex, 1);
-        actualProject = projects[projectIndex-1]
-        projectIndex = projectIndex - 1;
-        initializeWebPage();
-        projectList.options[projectIndex].selected = true;
-        projectInfo.innerHTML = actualProject.getName();
-    }
-}
-
-//aktualizacja listy aktywnych projektów
-
-function updateProjectList() {
-    const projectList = document.querySelector('#project-list');
-    projectList.innerHTML = '';
-
-    projects.forEach((project, index) => {
-        const projectOption = document.createElement('option');
-        projectOption.dataset.projectId = index;
-        projectOption.value = project.getName();
-        projectOption.innerHTML = project.getName();
-        projectList.appendChild(projectOption);
-    })
-
-    projectList.options[projectIndex].selected = true;
-}
-
-//ładowanie tasków na stronę
+//loading tasks on page
 
 function loadTasks() {
     const todoList = document.querySelector('.todo-list');
@@ -192,7 +322,7 @@ function loadTasks() {
         subtaskBlockTitle.innerHTML = 'subtask list';
         subtaskBlock.appendChild(subtaskBlockTitle);
 
-        //tutaj generowanie subtasków w tasku
+        //generating subtasks in single task
 
         task.subtasks.forEach((subtask, subindex) => {
             const subtaskPosition = document.createElement('div');
@@ -225,6 +355,8 @@ function loadTasks() {
                     subtaskPosition.style.color = 'black'
                 }
                 subtask.changeStatus();
+                subtask.status = subtask.getStatus();
+                localStorage.setItem('projects', JSON.stringify(projects))
             })
             
             subtaskLabel.appendChild(subtaskCheck);
@@ -244,17 +376,18 @@ function loadTasks() {
             subtaskRemove.appendChild(subtaskRemoveIcon);
             subtaskPosition.appendChild(subtaskRemove);
 
-            //usuwanie subtasków bezpośrednio w bloku
+            //deleting subtasks directly in task block
 
             subtaskRemove.addEventListener('click', () => {
                 actualProject.tasks[index].subtasks.splice(subindex, 1);
+                localStorage.setItem('projects', JSON.stringify(projects))
                 loadTasks();
                 document.querySelector(`[data-task-id="${index}"]`).classList.add('expand');
 
             })
         })
 
-        //tutaj dodawanie subtasków bezpośrednio w bloku
+        //adding new subtasks directly in task block
 
         const newSubTaskButton = document.createElement('button');
         newSubTaskButton.id = 'add-subtask-block';
@@ -289,6 +422,7 @@ function loadTasks() {
                             return false
                         }
                     actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
+                    localStorage.setItem('projects', JSON.stringify(projects))
                     loadTasks();
                     document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
                 })
@@ -337,6 +471,7 @@ function loadTasks() {
                     }
 
                     actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
+                    localStorage.setItem('projects', JSON.stringify(projects))
                     loadTasks();
                     document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
                 })
@@ -348,7 +483,7 @@ function loadTasks() {
             }
         })
         
-        //usuwanie tasków
+        //deleting whole tasks
 
         const removeTodoButton = document.createElement('button');
         const removeButtonContainer = document.createElement('div');
@@ -368,6 +503,7 @@ function loadTasks() {
                     if (subtaskList[i].checked === false) {
                         if (confirm(`There are undone subtasks in ${task.getName()}, you want to delete whole task anyway?`) === true) {
                             actualProject.tasks.splice(index, 1);
+                            localStorage.setItem('projects', JSON.stringify(projects))
                             loadTasks();
                             break;
                         } else {
@@ -375,11 +511,13 @@ function loadTasks() {
                         }
                     } else if (i === subtaskList.length - 1) {
                         actualProject.tasks.splice(index, 1);
+                        localStorage.setItem('projects', JSON.stringify(projects))
                         loadTasks();
                     }
                 }
             } else {
                 actualProject.tasks.splice(index, 1);
+                localStorage.setItem('projects', JSON.stringify(projects))
                 loadTasks();
             }
         })
@@ -387,125 +525,4 @@ function loadTasks() {
     })
 }
 
-//ładowanie nowego projektu na stronę i zmiana actualProject
-
-const projectList = document.querySelector('#project-list');
-const projectInfo = document.querySelector('.header-actual-project');
-
-projectList.addEventListener('change', () => {
-    const selectedOption = projectList.options[projectList.selectedIndex]
-    actualProject = projects[selectedOption.dataset.projectId]
-    projectIndex = selectedOption.dataset.projectId
-    console.log(actualProject)
-    console.log(projectIndex)
-    projectInfo.innerHTML = actualProject.getName();
-    loadTasks();
-});
-
-//tworzenie formularza nowych tasków 
-
-const addTaskButton = document.querySelector('#add-todo');
-const addTodoForm = document.querySelector('.add-todo-form');
-const formOverlay = document.querySelector('#form-overlay');
-const cancelForm = document.querySelector('#cancel-form');
-const subTaskSection = document.querySelector('[data-sub-form]');
-const taskName = document.querySelector('#task-name');
-addTaskButton.addEventListener('click', () => {
-    addTodoForm.classList.toggle('active');
-    formOverlay.classList.toggle('active');
-    taskName.focus();
-})
-cancelForm.addEventListener('click', () => {
-    addTodoForm.classList.toggle('active');
-    formOverlay.classList.toggle('active');
-    subTaskSection.innerHTML = '';
-    addNewSubtasksControls();
-    document.getElementById('add-task-form').reset();
-})
-
-const dueDateForm = document.querySelector('#task-due-date');
-dueDateForm.min = new Date().toLocaleDateString('en-ca');
-dueDateForm.max = "2100-01-01";
-
-//rysowanie dodawania subtasków w głównym formularzu
-
-function addNewSubtasksControls() {
-
-    const subSection = document.querySelector('[data-sub-form]');
-    const subSectionTitle = document.createElement('h3');
-    subSectionTitle.innerHTML = 'Add new subtask';
-    subSection.appendChild(subSectionTitle);
-
-    const addSubTaskButton = document.createElement('button');
-    addSubTaskButton.type = 'button';
-    addSubTaskButton.id = 'add-subtask-form';
-    const addSubTaskButtonIcon = document.createElement('img');
-    addSubTaskButtonIcon.src = 'images/plus.png';
-    addSubTaskButton.appendChild(addSubTaskButtonIcon);
-    subSection.appendChild(addSubTaskButton);
-
-    addSubTaskButton.addEventListener('click', () => {
-        const newSubTaskLabel = document.createElement('label');
-        const newSubTaskTitle = document.createElement('input');
-        const newSubTaskDateLabel = document.createElement('label');
-        const newSubTaskDueDate = document.createElement('input');
-        newSubTaskTitle.type = 'text';
-        newSubTaskTitle.id = 'subtask-name';
-        newSubTaskTitle.name = 'subtask-name';
-        newSubTaskLabel.for = newSubTaskTitle.id;
-        newSubTaskLabel.innerHTML = 'Subtask name:';
-        newSubTaskLabel.appendChild(newSubTaskTitle);
-        addSubTaskButton.before(newSubTaskLabel);
-        newSubTaskDueDate.type = 'date';
-        newSubTaskDueDate.id = 'subtask-due-date';
-        newSubTaskDueDate.name = 'subtask-due-date';
-        newSubTaskDueDate.min = new Date().toLocaleDateString('en-ca');
-        newSubTaskDueDate.max = "2100-01-01";
-        newSubTaskDateLabel.innerHTML = 'Subtask due date:';
-        newSubTaskDateLabel.appendChild(newSubTaskDueDate);
-        addSubTaskButton.before(newSubTaskDateLabel);
-    });
-
-};
-
-//dodawanie nowych tasków
-
-const confirmTaskButton = document.querySelector('#confirm-task-button');
-
-confirmTaskButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    const taskNameValue = document.getElementById('task-name').value;
-    let taskDueDate = document.getElementById('task-due-date').value;
-
-    if (taskNameValue === '') {
-        alert("Sorry, tasks must have a name.")
-        return false
-    }
-
-    actualProject.addTask(taskNameValue, taskDueDate);
-
-    const subTaskSection = document.querySelector('[data-sub-form]');
-    const subTaskSectionElements = document.querySelector('[data-sub-form]').elements;
-    const addedTaskIndex = actualProject.tasks.length - 1;
-
-    for (let i = 0; i<subTaskSectionElements.length; i++) {
-        if (subTaskSectionElements[i].type === 'text' && subTaskSectionElements[i].value !== '') {
-            actualProject.tasks[addedTaskIndex].addSubtask(subTaskSectionElements[i].value, subTaskSectionElements[i+1].value)
-        } else if (subTaskSectionElements[i].type === 'text' && subTaskSectionElements[i].value === '') {
-            alert("Sorry, tasks must have a name.")
-            return false
-        }
-    }
-
-    loadTasks();
-    addTodoForm.classList.toggle('active');
-    formOverlay.classList.toggle('active');
-    document.getElementById('add-task-form').reset();
-    subTaskSection.innerHTML = '';
-    addNewSubtasksControls()
-})
-
-
-
-
-export { initializeWebPage };
+export default initializeWebPage;

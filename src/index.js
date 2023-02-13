@@ -1,3 +1,4 @@
-import { initializeWebPage } from "./modules/ui";
+import initializeWebPage from "./modules/ui";
 
 initializeWebPage();
+

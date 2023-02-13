@@ -25,7 +25,7 @@ const Task = (name, dueDate) => {
         subtasks.push(newSubtask(name, dueDate, status));
     }
 
-    return { subtasks, getName, getDate, getRawDate, setDate, addSubtask }
+    return { subtasks, getName, getDate, getRawDate, setDate, addSubtask, name, dueDate }
 };
 
 export default Task;

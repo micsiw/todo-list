@@ -19,7 +19,7 @@ const Subtask = (name, dueDate, status = false) => {
         }
     }
 
-    return { getName, getDate, getStatus, changeStatus }
+    return { getName, getDate, getStatus, changeStatus, name, dueDate, status }
 
 }
 
