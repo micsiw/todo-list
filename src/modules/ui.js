@@ -146,6 +146,7 @@ function loadTasks() {
             const newDateContainer = document.createElement('div');
             const newDate = document.createElement('input');
             const newDateTooltip = document.createElement('p');
+            newDateContainer.classList.add('new-due-date')
             newDateTooltip.innerHTML = 'Press enter to confirm';
             newDateTooltip.classList.add('task-new-date-tooltip');
             newDate.type = 'date';
@@ -278,6 +279,20 @@ function loadTasks() {
                 newSubTaskForm.id = 'new-subtask-form-block';
                 newSubTaskInBlock.appendChild(newSubTaskForm);
 
+                newSubTaskForm.addEventListener('submit', (e) => {
+                    const subtaskNameBlock = document.getElementById('subtask-name-block').value;
+                    const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
+                    const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
+                    e.preventDefault();
+                        if (subtaskNameBlock === '') {
+                            alert("Sorry, tasks must have a name.")
+                            return false
+                        }
+                    actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
+                    loadTasks();
+                    document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
+                })
+
                 const newSubTaskLabel = document.createElement('label');
                 const newSubTaskTitle = document.createElement('input');
                 const newSubTaskDateLabel = document.createElement('label');
@@ -311,7 +326,7 @@ function loadTasks() {
                 newSubTaskAbandon.innerHTML = 'Abandon';
                 newSubTaskControls.append(newSubTaskAdd, newSubTaskAbandon)
 
-                newSubTaskAdd.addEventListener('click', () => {
+                newSubTaskAdd.addEventListener('click', (e) => {
                     const subtaskNameBlock = document.getElementById('subtask-name-block').value;
                     const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
                     const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
@@ -325,25 +340,6 @@ function loadTasks() {
                     loadTasks();
                     document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
                 })
-
-                //to fix
-
-                // newSubTaskAdd.addEventListener('keypress', (e) => {
-                //     if (e.key === 'Enter') {
-                //         const subtaskNameBlock = document.getElementById('subtask-name-block').value;
-                //         const subtaskDueDate = document.getElementById('subtask-due-date-block').value;
-                //         const actualTaskIndex = document.querySelector('.expand').dataset.taskId;
-
-                //         if (subtaskNameBlock === '') {
-                //             alert("Sorry, tasks must have a name.")
-                //             return false
-                //         }
-
-                //         actualProject.tasks[actualTaskIndex].addSubtask(subtaskNameBlock, subtaskDueDate);
-                //         loadTasks();
-                //         document.querySelector(`[data-task-id="${actualTaskIndex}"]`).classList.add('expand');
-                //     }
-                // })
 
                 newSubTaskAbandon.addEventListener('click', () => {
                     newSubTaskInBlock.remove();
@@ -413,9 +409,11 @@ const addTodoForm = document.querySelector('.add-todo-form');
 const formOverlay = document.querySelector('#form-overlay');
 const cancelForm = document.querySelector('#cancel-form');
 const subTaskSection = document.querySelector('[data-sub-form]');
+const taskName = document.querySelector('#task-name');
 addTaskButton.addEventListener('click', () => {
     addTodoForm.classList.toggle('active');
     formOverlay.classList.toggle('active');
+    taskName.focus();
 })
 cancelForm.addEventListener('click', () => {
     addTodoForm.classList.toggle('active');

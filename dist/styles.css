@@ -133,22 +133,23 @@ button:focus {
 }
 
 .todo-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(425px, .333fr));
+    grid-auto-rows: 50px;
+    gap: 20px;
     padding: 20px 30px;
-    gap: 5%;
     position: relative;
 }
 
 .todo-container {
-    width: 400px;
+    width: 100%;
     margin-bottom: 100px;
     position: relative;
 }
 
 .todo-block {
     position: absolute;
-    width: 400px;
+    width: 100%;
     max-height: 50px;
     border-radius: 10px;
     overflow: hidden;
@@ -183,6 +184,12 @@ button:focus {
 .task-new-date-tooltip {
     font-size: 0.7rem;
     text-align: center;
+}
+
+.new-due-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .subtask-block {
@@ -258,8 +265,8 @@ button:focus {
 }
 
 .subtask-position {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
 }
 
 .subtask-position > label {
@@ -278,6 +285,7 @@ button:focus {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
+    margin-left: 20px;
 }
 
 .subtask-remove img {
@@ -360,7 +368,7 @@ button:focus {
     height: auto;
     max-height: 600px;
     padding: 10px 15px;
-    background-color: #d3eaff;
+    background-color: #B9D6F2;
     border-radius: 16px;
 }
 
@@ -369,8 +377,10 @@ button:focus {
 }
 
 .todo-main-form, .todo-sub-form {
-    padding: 4px 6px;
-    margin-bottom: 10px;;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    background-color: #d3eaff;
+    border-radius: 10px;
 }
 
 .todo-main-form input, .todo-sub-form input {
