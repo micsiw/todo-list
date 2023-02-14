@@ -1,16 +1,15 @@
-import newTask from './tasks.js';
+import newTask from "./tasks";
 
 const Project = (name) => {
+  const getName = () => name;
 
-    const getName = () => name;
+  const tasks = [];
 
-    let tasks = [];
+  const addTask = (name, dueDate) => {
+    tasks.push(newTask(name, dueDate));
+  };
 
-    const addTask = (name, dueDate) => {
-        tasks.push(newTask(name, dueDate));
-    };
-    
-    return { getName, addTask, tasks, name};
+  return { getName, addTask, tasks, name };
 };
 
 export default Project;
