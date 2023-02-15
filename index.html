@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <div class="header-logo"><h1>Todo's</h1></div>
+            <div class="header-project-info">
+                <div class="header-actual-project"></div>
+                <div class="header-actual-label">actual project</div>
+            </div>
+            <div class="header-project-list">
+                <label for="project-list">Choose project: </label>
+                <select id="project-list" name="project-list"></select>
+                <button type="button" id="add-project">Add project</button>
+                <button type="button" id="delete-project">Delete project</button>
+            </div>
+        </header>
+        <main>
+            <div class="todo-list"></div>
+            <button type="button" id="add-todo">Add task</button>
+        </main>
+    </div>
+    <div class="add-todo-form">
+        <div class="form-header">
+            <div class="form-title">Add new task</div>
+            <button id="cancel-form">&#10799;</button>
+        </div>
+        <div class="form-content">
+            <form id="add-task-form">
+                <fieldset data-main-form class="todo-main-form">
+                    <label for="task-name">Task name:
+                    <input type="text" id="task-name" name="task-name" maxlength="26"></label>
+                    <label for="task-due-date">Due date:
+                    <input type="date" id="task-due-date" name="task-due-date"></label>
+                </fieldset>
+                <fieldset data-sub-form class="todo-sub-form"></fieldset>
+            </form>
+            <div class="confirm-task-button-container"><button type="submit" form="add-task-form" id="confirm-task-button">Add new task</button></div>
+        </div>
+    </div>
+    <div id="form-overlay"></div>
+</body>
+</html>

@@ -1,0 +1,539 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Nunito", sans-serif;
+}
+
+button {
+  cursor: pointer;
+  font-family: "Nunito", sans-serif;
+}
+
+input {
+  font-family: "Nunito", sans-serif;
+}
+
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+header {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background-color: #0353a4;
+  color: white;
+  padding: 14px 30px;
+}
+
+.header-logo {
+  font-size: 1.4rem;
+  font-family: "Nunito", sans-serif;
+  grid-column: 1 / 2;
+}
+
+.header-project-info {
+  text-align: center;
+  grid-column: 3;
+}
+
+.header-actual-project {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.header-actual-label {
+  font-size: 0.8rem;
+  margin-bottom: -4px;
+  font-style: italic;
+}
+
+.header-project-list {
+  grid-column: 4 / 6;
+  align-self: center;
+  justify-self: end;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+#add-project,
+#delete-project,
+#button-project-accept {
+  background-color: #149911;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.5rem 0.7rem;
+  text-align: center;
+  text-decoration: none #6b7280 solid;
+  text-decoration-thickness: auto;
+  transition-duration: 0.2s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+#add-project:hover,
+#button-project-accept:hover {
+  background-color: #11b30e;
+}
+
+#delete-project:hover {
+  background-color: #e71010;
+}
+
+button:focus {
+  box-shadow: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+#add-project-form {
+  height: 2rem;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+#button-project-accept {
+  margin-left: 10px;
+}
+
+#delete-project {
+  margin-left: 10px;
+  background-color: #c90101;
+}
+
+#project-list {
+  cursor: pointer;
+  margin-right: 40px;
+  width: 120px;
+  font-size: 1.2rem;
+  position: relative;
+  top: 2px;
+  border-radius: 10px;
+  padding: 2px 4px;
+}
+
+.todo-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(425px, 0.333fr));
+  grid-auto-rows: 50px;
+  gap: 20px;
+  padding: 20px 30px;
+  position: relative;
+}
+
+.todo-container {
+  width: 100%;
+  margin-bottom: 100px;
+  position: relative;
+}
+
+.todo-block {
+  position: absolute;
+  width: 100%;
+  max-height: 50px;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: z-index 0.4s step-end, max-height 0.6s ease-out;
+  background-color: #b9d6f2;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 50px auto;
+  cursor: cell;
+  padding-bottom: 4px;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 10px;
+}
+
+.todo-block.expand {
+  height: auto;
+  max-height: 800px;
+  z-index: 2;
+  transition: z-index 0.4s step-start, max-height 0.6s ease-in;
+  cursor: default;
+}
+
+.todo-date {
+  cursor: pointer;
+}
+
+.task-new-date-tooltip {
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.new-due-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.subtask-block {
+  display: grid;
+  grid-auto-rows: 40px;
+  margin: 4px 8px;
+  padding: 4px 6px;
+  align-items: center;
+  background-color: #d3eaff;
+  border-radius: 10px;
+}
+
+.subtask-block-title {
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.new-subtask-block {
+  grid-row-end: span 2;
+
+  margin: 2px 8px;
+  font-size: 0.9rem;
+}
+
+.new-subtask-block > form {
+  display: flex;
+  flex-direction: column;
+}
+
+.new-subtask-block label {
+  margin-bottom: 6px;
+}
+
+.new-subtask-block input {
+  height: 22px;
+  border-radius: 6px;
+  padding: 6px 6x;
+  margin-left: 4px;
+}
+
+.new-subtask-controls-block {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding-bottom: 2px;
+}
+
+.new-subtask-controls-block button {
+  background-color: #0353a4;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  line-height: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none #6b7280 solid;
+  text-decoration-thickness: auto;
+  transition-duration: 0.2s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+.new-subtask-controls-block button:hover {
+  background-color: #1d6ebe;
+}
+
+.subtask-position {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+}
+
+.subtask-position > label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subtask-remove {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  margin-left: 20px;
+}
+
+.subtask-remove img {
+  height: 18px;
+}
+
+#remove-todo {
+  background-color: #0353a4;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.05rem 0.6rem;
+  text-align: center;
+  text-decoration: none #6b7280 solid;
+  text-decoration-thickness: auto;
+  transition-duration: 0.2s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+#remove-todo:hover {
+  background-color: #1d6ebe;
+}
+
+.remove-todo-container {
+  display: flex;
+  justify-content: center;
+}
+
+#add-todo {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #0353a4;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  text-decoration: none #6b7280 solid;
+  text-decoration-thickness: auto;
+  transition-duration: 0.2s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+#add-todo:hover {
+  background-color: #1d6ebe;
+}
+
+.add-todo-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  z-index: 10;
+  background-color: white;
+  width: 400px;
+  height: auto;
+  max-height: 600px;
+  padding: 10px 15px;
+  background-color: #b9d6f2;
+  border-radius: 16px;
+}
+
+.form-title {
+  font-weight: 600;
+}
+
+.todo-main-form,
+.todo-sub-form {
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  background-color: #d3eaff;
+  border-radius: 10px;
+}
+
+.todo-main-form input,
+.todo-sub-form input {
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+.todo-sub-form input {
+  margin-left: 4px;
+}
+
+.todo-sub-form h3 {
+  font-weight: 600;
+}
+
+#add-subtask-form {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+#add-subtask-form > img {
+  height: 26px;
+  transition: transform 0.1s;
+}
+
+#add-subtask-form > img:hover {
+  transform: scale(1.1);
+}
+
+#add-subtask-block {
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.confirm-task-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+#confirm-task-button {
+  background-color: #0353a4;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  padding: 0.05rem 0.6rem;
+  text-align: center;
+  text-decoration: none #6b7280 solid;
+  text-decoration-thickness: auto;
+  transition-duration: 0.2s;
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+}
+
+#confirm-task-button:hover {
+  background-color: #1d6ebe;
+}
+
+#add-subtask-block > img {
+  height: 26px;
+  transition: transform 0.1s;
+}
+
+#add-subtask-block > img:hover {
+  transform: scale(1.1);
+}
+
+.add-todo-form.active {
+  transform: translate(-50%, -50%) scale(1);
+  overflow: auto;
+}
+
+.form-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+#cancel-form {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.form-content > form > fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+fieldset > h3 {
+  text-align: center;
+}
+
+#form-overlay {
+  position: fixed;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+#form-overlay.active {
+  pointer-events: all;
+  opacity: 1;
+  z-index: 3;
+}
